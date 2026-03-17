@@ -75,6 +75,8 @@ Files:
 - `bmad-godot-bundle/game-architect---96463eb1-5c83-4ade-8d32-202b1f067026.txt`
 - `bmad-godot-bundle/game-designer---2622f709-5cc0-4fee-a687-577e3c8a482c.txt`
 - `bmad-godot-bundle/game-developer---d782000f-511e-461a-a30c-41363ec9889f.txt`
+- `bmad-godot-bundle/game-pm---4540434c-264b-4a25-b6dc-c530a08c7547.txt`
+- `bmad-godot-bundle/game-ux-expert---9c68daf9-5d49-4e49-a3db-312a10916c98.txt`
 
 Interpretation:
 - These contain specialized Godot/team workflow guidance.
