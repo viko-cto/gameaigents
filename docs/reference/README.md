@@ -73,7 +73,13 @@ These files are the raw rolling research set synthesized into the strategy memo.
 - `research-daily/gameaigents-2026-03-01---f7b9f6c3-e840-40b7-a910-b00e5b051d46.md`
 - `research-daily/gameaigents-2026-03-04---da37c89b-6416-4bc4-884b-87ac2a6b7c4b.md`
 - `research-daily/GameAIgents-Research-2026-03-06---c8d49336-b6ad-454b-9caa-858c90a47e74.md`
+- `research-daily/2026-03-07-GameAIgents-Research---7455e6e9-85c6-49f4-afef-799b1638dc73.md`
+- `research-daily/GameAIgents-Research-2026-03-08---02ca4b7c-def0-4cf8-9941-77dd924fbf41.md`
 - `research-daily/GameAIgents-Research-2026-03-08_1---4b258fbe-9508-47a9-be50-b341e7f10845.md`
+- `research-daily/2026-03-09---6d71d875-08a3-4dda-ada5-f2a93efd86de.md`
+- `research-daily/GameAIgents-Research-2026-03-12---98646c11-a5ae-4b4c-ac0c-5b3fd70109e9.md`
+- `research-daily/GameAIgents-Research-2026-03-14---0258e9a4-0c5b-4643-9309-6c60491a998e.md`
+- `research-daily/GameAIgents-2026-03-16---acc70f71-848e-4bb7-92ee-c31b5f9f7d19.md`
 
 ### Build notes / implementation history
 These are important because they prove prior implementation momentum and clarify technical assumptions:

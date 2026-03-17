@@ -586,10 +586,85 @@ Not only Godot.
 
 A serious creator workflow.
 
+## Addendum from the later March research batch
+
+The final research batch sharpened a few important points that strengthen the thesis rather than changing it.
+
+### 1. Unity is deeper than a prompt box
+The newer research shows Unity's moat is not just text-to-game marketing. It is a broader engine-native stack:
+- editor assistance
+- profiling / performance help
+- UI/layout generation
+- platform deployment tooling
+- ML / behavior ecosystems
+
+Implication:
+- if GameAIgents supports Unity, it must do more than export code files
+- it should compile into **real Unity project context** and eventually support profiler-aware iteration, prefab/scene editing, and production workflow handoff
+
+### 2. The competitor frontier is shifting from assets to mechanics
+Meshy Labs' "atomic mechanics" / Designer Agent framing matters.
+This means the next wave is not just:
+- generate art
+- generate terrain
+- generate dialogue
+
+It is:
+- generate **mechanic building blocks**
+- compose rulesets
+- tune game feel
+- balance interactions
+
+Implication:
+- GameAIgents should explicitly include a **mechanics composer** or rules assembly layer inside the artifact compiler and playtest system
+- the real opportunity is not only world generation; it is translating vague design intent into reusable systems
+
+### 3. Platform-safe publishing is part of the product, not an appendix
+The later research adds a more complete picture beyond Steam:
+- Steam focuses on disclosure and guardrails for player-facing generative content
+- Apple will care heavily about UGC moderation, reporting, age-rating, abuse controls, and privacy
+- Google Play is increasingly explicit that developers remain responsible for harmful or restricted AI outputs and need in-app reporting flows
+
+Implication:
+- GameAIgents should not stop at AI disclosure helpers
+- it should include a **platform publishing safety layer**:
+  - Steam disclosure checklist
+  - Apple creator-content / UGC moderation checklist
+  - Google Play reporting / harmful-content checklist
+  - audit trail for outputs and moderation events
+
+### 4. The safest market story is "copilot", not "autonomous maker"
+The newer research reinforced something important:
+- devs are open to AI as productivity layer
+- devs are skeptical of black-box autonomy
+- trust increases when the workflow is transparent, editable, and honest about limits
+
+Implication:
+- GameAIgents should be framed as:
+  - creator-first
+  - exportable
+  - editable
+  - compliance-aware
+  - anti-slop
+
+This makes the messaging stronger:
+> **Assist, accelerate, de-risk**
+
+### 5. Launch motion should start with creators, not storefront grandstanding
+The later research strengthens the launch recommendation:
+- Discord + web waitlist + game-jam challenges
+- itch.io / browser demos for early proof
+- YouTube / devlog creators for credibility
+- Steam later, once the product demo loop and compliance story are ready
+
+Implication:
+- GameAIgents should not try to launch like a polished consumer game platform on day one
+- it should launch like a sharp creator tool with visible proof-of-work
+
 ## Source notes
 
 Primary internal sources synthesized:
-- Daily GameAIgents research files from 2026-02-11 through 2026-03-08
+- Daily GameAIgents research files from 2026-02-11 through 2026-03-16
 - prior GameAIgents reference pack and build notes
 - official public confirmations cross-checked for:
   - Google Project Genie / Genie 3
