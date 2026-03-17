@@ -4,6 +4,17 @@ These documents were provided by Vadim on 2026-03-17.
 
 **Instruction:** Treat prior docs as strong input and inspiration only. BMAD is allowed to challenge everything.
 
+## Fresh synthesis from the research batch
+
+A new strategy memo was added based on the daily competitive research + official world-model sanity checks:
+
+- `../strategy/2026-03-17-competitive-learnings-and-world-model-plan.md`
+
+This memo should be read before BMAD kickoff if the team needs a grounded answer to:
+- how to differentiate from Unity / Rosebud / SEELE / Google / Roblox,
+- whether to implement Genie-like capabilities,
+- and how to do world-model integration without turning the product into hype soup.
+
 ## Updated strategic position after second batch
 
 This second batch changes the starting point in an important way:
@@ -49,6 +60,20 @@ These are strategically important and should influence kickoff heavily:
 
 2. `background/AI_Powered_Game_Development_Platform_Strategic_Opportunity_A---54edf209-d427-4318-98b8-79394577cd4e.md`
    - Opportunity sizing and bullish strategic framing
+
+### Daily competitive research archive
+These files are the raw rolling research set synthesized into the strategy memo. Use them as evidence and trend support, not as final product truth:
+
+- `research-daily/GameAIgents-Research-2026-02-11---abbbfca0-3b01-415b-962e-3da9048b7898.md`
+- `research-daily/GameAIgents-Research-2026-02-12---91645653-5ccc-4e38-9f4e-eeb7206f7d5e.md`
+- `research-daily/GameAIgents-Research-2026-02-13---562a2fcd-ab88-4718-856d-f83242acc1f2.md`
+- `research-daily/GameAIgents-2026-02-14---eacef983-c144-42d7-8fef-83fc60663901.md`
+- `research-daily/GameAIgents-Research-2026-02-15---29cacb89-f643-443a-b59b-430177d85e4a.md`
+- `research-daily/GameAIgents-Research-2026-02-25---3843f40e-a335-4e91-bd08-07e5a9af1431.md`
+- `research-daily/gameaigents-2026-03-01---f7b9f6c3-e840-40b7-a910-b00e5b051d46.md`
+- `research-daily/gameaigents-2026-03-04---da37c89b-6416-4bc4-884b-87ac2a6b7c4b.md`
+- `research-daily/GameAIgents-Research-2026-03-06---c8d49336-b6ad-454b-9caa-858c90a47e74.md`
+- `research-daily/GameAIgents-Research-2026-03-08_1---4b258fbe-9508-47a9-be50-b341e7f10845.md`
 
 ### Build notes / implementation history
 These are important because they prove prior implementation momentum and clarify technical assumptions:
