@@ -15,6 +15,17 @@ This memo should be read before BMAD kickoff if the team needs a grounded answer
 - whether to implement Genie-like capabilities,
 - and how to do world-model integration without turning the product into hype soup.
 
+## BMAD installation state
+
+A fresh BMAD install note was added documenting the successful Game Dev Studio module install and the registry workaround:
+
+- `bmad-install-2026-03-17.md`
+
+Current project install state after refresh:
+- `core` 6.2.0
+- `bmm` 6.2.0
+- `gds` 0.2.2 (Game Dev Studio)
+
 ## Updated strategic position after second batch
 
 This second batch changes the starting point in an important way:
