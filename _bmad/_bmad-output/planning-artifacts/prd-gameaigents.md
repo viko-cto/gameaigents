@@ -275,3 +275,229 @@ The system shall flag, but not theatrically over-block, requests that exceed the
 - **Selective recompile** is locked to narrow shipping boundaries with explicit blast-radius disclosure.
 - **Playtest guidance** remains inside scope only as artifact-linked refinement help.
 - Step 3 should now define the underlying data and interface contracts that make these features implementable.
+
+## 16. Data and Interface Contracts
+
+This section defines the canonical contracts that make the GameAIgents MVP implementable without depending on chat-history reconstruction, unsafe overwrite behavior, or vague trust surfaces.
+The goal is to keep **intake → brief → artifact graph → compile → selective recompile → compare/rollback → provenance → playtest guidance** on one coherent underlying model.
+
+### 16.1 Contract design principles
+
+- **Typed artifacts beat chat-history dependency:** project state must survive outside a conversation transcript.
+- **Lineage must survive every compile, recompile, rollback, and export:** creator trust collapses if history cannot be reconstructed.
+- **Semantic scopes come before file paths:** creators think in scene/mechanics/UI boundaries, not internal path trees.
+- **Deterministic build facts, model-assisted drafting:** LLMs can help draft structure, but manifests, scope guards, and provenance define what actually happened.
+- **Godot-first execution, engine-flexible core:** Godot is the first deep adapter, not the entire product data model.
+- **Private by default, explicit when exported:** creator work is private unless intentionally shared or exported.
+- **World Sketch stays optional but structurally compatible:** future world inputs should fit the graph without becoming mandatory in MVP.
+
+### 16.2 Canonical domain entities
+
+#### Project and intake entities
+
+| Entity | Purpose | Required Fields | Notes |
+|---|---|---|---|
+| `ProjectWorkspace` | Canonical project shell | `id`, `ownerId`, `name`, `primaryEngine`, `privacyMode`, `status`, `createdAt` | MVP assumes solo ownership but should not block later collaborator support. |
+| `CreatorIntentBundle` | Raw creator input before structured drafting | `id`, `projectId`, `rawPrompt`, `constraintJson`, `capturedAt`, `createdBy` | Preserves original intent instead of replacing it with only inferred structure. |
+| `SourceReference` | Uploaded or linked source context | `id`, `projectId`, `referenceType`, `storageRef`, `label`, `rightsNote`, `addedAt` | Covers screenshots, docs, mood boards, snippets, and future world inputs. |
+| `BriefRevision` | Versioned structured brief state | `id`, `projectId`, `parentRevisionId?`, `briefJson`, `status`, `createdAt`, `createdBy` | Compile may only run against an explicit approved revision. |
+
+#### Artifact graph, compile, and revision entities
+
+| Entity | Purpose | Required Fields | Notes |
+|---|---|---|---|
+| `ProjectArtifact` | Typed node in the artifact graph | `id`, `projectId`, `artifactType`, `semanticScope`, `engineTarget`, `currentRevisionId`, `status`, `createdAt` | Artifact types include `brief`, `compile-spec`, `scene-shell`, `config`, `ui-shell`, `playtest-note`, and future `world-sketch`. |
+| `ArtifactLink` | Explicit lineage relationship between artifacts | `id`, `fromArtifactId`, `toArtifactId`, `relationshipType`, `createdAt` | Supports `derived-from`, `supersedes`, `depends-on`, and `references`. |
+| `ArtifactRevision` | Immutable content revision for one artifact | `id`, `artifactId`, `contentRef`, `summary`, `createdAt`, `createdBy`, `sourceRunId?` | History must remain inspectable even when the graph points at the current revision. |
+| `CompileRun` | One compile or recompile execution unit | `id`, `projectId`, `runType`, `engineTarget`, `sourceBriefRevisionId`, `status`, `requestedBy`, `requestedAt`, `completedAt?` | `runType` starts as `compile` or `selective-recompile`. |
+| `CompileManifest` | Machine-readable + creator-readable output summary | `id`, `compileRunId`, `generatedArtifactsJson`, `fileMapJson`, `inspectionPointsJson`, `warningsJson`, `createdAt` | Backbone for compile summary, compare/rollback, and trust surfaces. |
+| `ScopeContract` | Semantic recompile boundary mapped to real files/artifacts | `id`, `projectId`, `scopeType`, `label`, `artifactIdsJson`, `allowedPathsJson`, `blockedPathsJson`, `blastRadius`, `createdAt` | MVP scope types: `scene-structure`, `mechanics-config`, `interaction-ui`. |
+| `RecompileRequest` | User request for a bounded update | `id`, `projectId`, `scopeContractId`, `requestedChange`, `baselineRevisionId`, `approvalState`, `executionState`, `createdAt` | Separates creator intent from execution approval. |
+| `RevisionCheckpoint` | Restore point for compile/recompile/rollback | `id`, `projectId`, `checkpointType`, `sourceRunId`, `manifestId`, `snapshotRef`, `createdAt` | Compare/rollback must target meaningful checkpoints, not arbitrary chat turns. |
+
+#### Trust, playtest, and future-compatibility entities
+
+| Entity | Purpose | Required Fields | Notes |
+|---|---|---|---|
+| `ProvenanceRecord` | Source + generation history for meaningful outputs | `id`, `projectId`, `subjectType`, `subjectId`, `provenanceClass`, `provider`, `model`, `promptRef?`, `createdAt` | Provenance must survive export and future publishing workflows. |
+| `PolicyGateResult` | Safety / disclosure / platform-aware check result | `id`, `projectId`, `subjectType`, `subjectId`, `gateType`, `result`, `reasonJson`, `checkedAt` | Keeps trust logic auditable instead of hidden in prompts. |
+| `PlaytestObservation` | Artifact-linked playtest guidance unit | `id`, `projectId`, `checkpointId`, `observationType`, `artifactRef`, `severity`, `hypothesis`, `suggestedAction`, `createdAt` | Must point to a concrete artifact or scope, not vague commentary. |
+| `WorldSketchArtifact` | Optional future world/sketch input artifact | `id`, `projectId`, `captureType`, `mediaRef`, `extractedFactsJson`, `compatibilityStatus`, `createdAt` | Keeps future world input structurally compatible without forcing it into MVP. |
+
+### 16.3 Core state and lifecycle contracts
+
+#### Artifact lifecycle
+
+| State | Meaning | User Impact |
+|---|---|---|
+| `draft` | Artifact exists but is not approved for downstream compile use | Editable but not compile-eligible |
+| `approved` | Artifact is accepted as current structured truth | Eligible for compile planning |
+| `materialized` | Artifact produced real engine or system output | Appears in compare/rollback and provenance |
+| `superseded` | A newer revision or artifact replaced it | Remains inspectable but not current |
+| `reverted` | Artifact was rolled back from a later state | Previous checkpoint restored, history retained |
+| `archived` | Artifact retained for history/export only | Hidden from default workflow views |
+
+#### Compile lifecycle
+
+`requested` → `planning` → `queued` → `running` → `succeeded` or `failed` or `cancelled`
+
+A compile is not complete unless it produces:
+- a `CompileRun` status transition
+- a `CompileManifest`
+- at least one `RevisionCheckpoint`
+- provenance records for meaningful generated outputs
+
+#### Selective recompile lifecycle
+
+`proposed` → `reviewed` → `approved` → `executing` → `succeeded` or `failed` or `rejected` or `reverted`
+
+Selective recompile may only execute against a declared `ScopeContract`. If requested changes exceed that scope contract or overlap blocked paths, the system must warn, reject, or require broader explicit approval instead of silently proceeding.
+
+#### Provenance classes
+
+| Class | Meaning | User Impact |
+|---|---|---|
+| `human-authored` | Created directly by the creator | Exported as human-originated |
+| `ai-generated` | Generated fresh by the system | Must remain visible in provenance/export views |
+| `ai-modified` | Existing artifact was transformed by AI | Requires before/after linkage |
+| `imported-reference` | External source used as inspiration/context | Must preserve source note and rights label |
+| `user-edited-after-ai` | Human changed an AI-origin artifact later | Important for continuation and disclosure support |
+
+## 17. Technical and Interface Requirements
+
+- **FR-19** The system shall persist one canonical `CreatorIntentBundle` for each project revision cycle so raw input remains visible alongside structured brief revisions.
+- **FR-20** The system shall store project state as a typed artifact graph rather than as a chat transcript or opaque blob.
+- **FR-21** Each durable artifact relationship shall be represented through explicit `ArtifactLink` lineage so downstream outputs can trace back to source artifacts.
+- **FR-22** Brief revisions shall be immutable once approved for compile planning; later changes create new revisions rather than mutating history in place.
+- **FR-23** Every compile or recompile shall create a `CompileRun` record containing source brief revision, engine target, run type, status, and request timestamps.
+- **FR-24** Every successful compile or recompile shall produce a `CompileManifest` containing generated artifacts, file map, creator inspection points, and warnings.
+- **FR-25** Selective recompile shall execute only against a declared `ScopeContract` that maps creator-meaningful scope to constrained artifact and file paths.
+- **FR-26** Before a selective recompile executes, the system shall disclose expected blast radius, preserved areas, and blocked areas in creator-readable language.
+- **FR-27** The system shall preserve creator edits outside the approved recompile scope or explicitly refuse execution when edit-preservation cannot be verified.
+- **FR-28** The system shall create a `RevisionCheckpoint` for each compile, recompile, and rollback event so compare/rollback always target durable restore points.
+- **FR-29** The system shall record provenance for meaningful generated, modified, imported, and exported artifacts with model/provider and revision linkage.
+- **FR-30** Creator-facing compile summaries, compare views, and rollback views shall resolve against manifests and checkpoints rather than best-effort text reconstruction.
+- **FR-31** Playtest observations shall reference concrete artifact ids, semantic scopes, or checkpoint ids rather than generic project-level commentary.
+- **FR-32** The artifact graph shall support optional `WorldSketchArtifact` nodes without making world input mandatory in the MVP loop.
+- **FR-33** Trust-critical write operations, including project creation, compile requests, recompile requests, rollback actions, and export generation, shall accept idempotency keys.
+- **FR-34** The platform shall emit domain events for core workflow state changes so analytics, orchestration, and audit flows do not depend on ad hoc UI instrumentation.
+- **FR-35** Project workspaces and artifacts shall be private by default; exports, shares, or collaboration surfaces require explicit user action.
+- **FR-36** Policy checks for publish-safety, provenance completeness, and out-of-scope risk shall run as explicit `PolicyGateResult` records rather than hidden one-off prompt rules.
+
+## 18. Interface Specifications
+
+### 18.1 Client-facing API surface
+
+| Endpoint / Action | Purpose | Required Request Fields | Contract Notes |
+|---|---|---|---|
+| `POST /api/projects` | Create project workspace | `idempotencyKey`, `name`, `primaryEngine`, `privacyMode` | Returns `ProjectWorkspace` and initial graph root. |
+| `POST /api/projects/{id}/intake` | Capture raw creator intent and references | `idempotencyKey`, `rawPrompt`, `constraintJson`, `references[]` | Produces `CreatorIntentBundle` and `SourceReference` records. |
+| `POST /api/projects/{id}/brief-revisions` | Save/edit structured brief revision | `idempotencyKey`, `parentRevisionId?`, `briefJson`, `status` | Compile may only use an approved revision. |
+| `GET /api/projects/{id}/artifact-graph` | Read artifact graph for UI and compare flows | `revisionId?` | Returns artifacts, links, statuses, and current checkpoints. |
+| `POST /api/projects/{id}/compile-runs` | Start first compile | `idempotencyKey`, `sourceBriefRevisionId`, `engineTarget` | Returns `CompileRun` id and initial status. |
+| `GET /api/compile-runs/{id}` | Read compile status and summary | none | Returns lifecycle state, warnings, and manifest reference when available. |
+| `POST /api/projects/{id}/recompile-requests` | Start selective recompile flow | `idempotencyKey`, `scopeContractId`, `requestedChange`, `baselineRevisionId` | Must return blast-radius disclosure before execution finalization. |
+| `GET /api/projects/{id}/revisions/{id}/compare` | Compare revision checkpoints | `againstRevisionId` | Compare must be manifest-aware, not raw file diff only. |
+| `POST /api/projects/{id}/revisions/{id}/rollback` | Restore prior checkpoint | `idempotencyKey`, `targetCheckpointId` | Must create a new checkpoint recording the rollback action. |
+| `GET /api/projects/{id}/provenance/export` | Export provenance bundle | `format?` | Export should include revision lineage and policy flags. |
+| `POST /api/projects/{id}/playtest-guidance` | Generate bounded playtest observations | `checkpointId`, `focusAreas[]` | Returns artifact-linked observations and next actions. |
+
+### 18.2 Internal service contracts
+
+| Service Contract | Input | Output | Failure Behavior |
+|---|---|---|---|
+| `IntakeNormalizationService` | raw prompt, constraints, references | normalized `CreatorIntentBundle` + source refs | Preserve messy input; never discard creator phrasing silently |
+| `BriefStructuringService` | intent bundle + approved references | `BriefRevision` candidate | Must separate inferred assumptions from explicit creator input |
+| `ArtifactGraphService` | project + revisions + manifests | typed graph read model | If lineage is incomplete, mark graph degraded instead of fabricating links |
+| `CompilePlanner` | approved brief revision + target engine | compile plan + target artifact set | Reject impossible or out-of-scope plans before compile starts |
+| `GodotCompilerAdapter` | compile plan + artifact graph | generated files + artifact revisions + manifest entries | No partial failed output may masquerade as successful current state |
+| `ScopeGuardService` | requested change + baseline revision + scope contract | allowed paths, blocked paths, blast-radius summary | Must fail closed when scope cannot be resolved safely |
+| `CompareRollbackService` | checkpoint ids + manifest refs | compare payload or restored checkpoint | Rollback must be atomic; partial restore is forbidden |
+| `ProvenanceAssembler` | artifact revisions + run metadata + policy results | provenance bundle | Missing provenance must surface as incomplete, not silently omitted |
+| `PlaytestObservationService` | checkpoint + artifacts + focus areas | `PlaytestObservation[]` | Must reject unsupported grand claims beyond available evidence |
+| `PolicyGateService` | artifact/run/export request | `PolicyGateResult[]` | Must block or warn explicitly by configured severity |
+
+### 18.3 Domain event contracts
+
+| Event | Trigger | Required Payload |
+|---|---|---|
+| `project.intake.captured` | Raw intent persisted | `projectId`, `intentBundleId`, `referenceCount`, `createdBy` |
+| `brief.revision.approved` | Brief revision approved for compile | `projectId`, `briefRevisionId`, `parentRevisionId?`, `createdBy` |
+| `compile.requested` | Compile run created | `projectId`, `compileRunId`, `engineTarget`, `runType` |
+| `compile.succeeded` | Compile completed successfully | `projectId`, `compileRunId`, `manifestId`, `checkpointId` |
+| `recompile.requested` | Recompile flow started | `projectId`, `recompileRequestId`, `scopeContractId`, `baselineRevisionId` |
+| `recompile.succeeded` | Recompile completed | `projectId`, `recompileRequestId`, `manifestId`, `checkpointId` |
+| `revision.rollback.performed` | Rollback completed | `projectId`, `targetCheckpointId`, `newCheckpointId`, `triggeredBy` |
+| `playtest.guidance.generated` | Playtest observations created | `projectId`, `checkpointId`, `observationCount`, `focusAreas` |
+| `provenance.exported` | Provenance bundle generated | `projectId`, `exportFormat`, `artifactCount`, `policySummary` |
+
+## 19. Trust, Privacy, and Publish-Safety Contracts
+
+### 19.1 Data classes
+
+| Data Class | Examples | Default Visibility | Handling Rule |
+|---|---|---|---|
+| `project-private` | raw prompts, references, brief drafts, source files | project owner only | private until explicit export/share action |
+| `generated-build` | manifests, generated files, scope maps, checkpoints | project owner only | can be exported only with explicit provenance packaging |
+| `publish-support` | provenance bundle, disclosure notes, policy results | owner-controlled export | never auto-shared publicly |
+| `system-sensitive` | credentials, provider secrets, internal moderation/policy rules | internal only | encrypted, least-privilege, never exposed in creator UI |
+
+### 19.2 Operating rules
+
+- A compile summary is a trust surface and must reflect actual manifest data, not narrative guesswork.
+- Compare/rollback views must prefer creator-meaningful scopes and files over raw model or log noise.
+- Selective recompile must fail closed when the system cannot confidently preserve work outside the approved boundary.
+- Provenance must remain lightweight in the default workflow, but complete enough for later export and platform disclosure support.
+- World Sketch inputs, if introduced later, must be treated as optional source artifacts rather than replacing the deterministic artifact spine.
+
+## 20. Measurable Non-Functional Requirements
+
+- **NFR-001 Graph Responsiveness:** The artifact graph view shall load in <= 1.5 seconds p95 for MVP-scale projects.
+- **NFR-002 Compile Acknowledgement:** Creating a compile or recompile request shall return accepted status and run id in <= 2.0 seconds p95.
+- **NFR-003 First Status Visibility:** Compile jobs shall expose their first lifecycle update in <= 5.0 seconds p95 after request acceptance.
+- **NFR-004 Blast-Radius Analysis:** Scope analysis for selective recompile shall complete in <= 4.0 seconds p95 for supported MVP boundaries.
+- **NFR-005 Manifest Availability:** A successful compile or recompile shall produce a creator-readable summary and machine-readable manifest within <= 15 seconds of job completion p95.
+- **NFR-006 Checkpoint Integrity:** 100% of successful compile, recompile, and rollback actions shall create a valid revision checkpoint and manifest linkage.
+- **NFR-007 Failure Safety:** Failed or cancelled recompile runs shall leave the last good checkpoint restorable without manual intervention.
+- **NFR-008 Reliability:** Core project, graph, compile-status, compare, rollback, and provenance endpoints shall achieve >= 99.5% monthly availability excluding scheduled maintenance.
+- **NFR-009 Security:** Project-private and system-sensitive data shall be encrypted in transit and at rest, with secrets stored outside application code.
+- **NFR-010 Traceability:** 100% of creator-facing compile summaries, compare views, rollback actions, and playtest observations shall resolve to recorded manifests, checkpoints, or artifact ids in internal audit views.
+
+## 21. Step 3 Elicitation Outcomes
+
+### Architecture decisions locked in this step
+
+| ADR | Decision | Why It Was Chosen | Product Consequence |
+|---|---|---|---|
+| ADR-001 | Use a typed artifact graph with immutable revisions and explicit lineage links | Creators need inspectable workflow state, while engineering needs durable structure | The product no longer depends on chat-history reconstruction |
+| ADR-002 | Define selective recompile through semantic `ScopeContract` boundaries mapped to constrained files/artifacts | File paths alone are unsafe and not creator-meaningful | Recompile can be honest about blast radius and preservation |
+| ADR-003 | Make `CompileRun`, `CompileManifest`, `RevisionCheckpoint`, and `ProvenanceRecord` first-class records | Compile trust requires durable operational facts | Compare/rollback, compile summary, and provenance now share one source of truth |
+| ADR-004 | Keep engine target on runs/artifacts but isolate Godot-specific logic inside the compiler adapter layer | Godot-first execution should not become Godot-only architecture | Unity expansion remains additive instead of requiring a full data-model rewrite |
+| ADR-005 | Model World Sketch as an optional future artifact type | Strategic compatibility matters, but mandatory world input would bloat the MVP | The north-star story stays intact without distorting launch scope |
+| ADR-006 | Require explicit policy-gate records and domain events at the contract layer | Trust/compliance and analytics cannot depend on ad hoc prompts or front-end hacks | Publish-safety review and funnel analysis become implementation-ready |
+
+### Cross-functional war room resolutions
+
+- **Design + Engineering:** compile manifest must include creator inspection points, not just machine-readable file listings.
+- **Product + Trust:** provenance has to be lightweight in the default workflow, but complete enough for later export/disclosure needs.
+- **Engineering + Trust:** recompile must fail closed when preservation guarantees are weak; silent overwrite is worse than refusal.
+- **Product + Analytics:** domain events belong in the contract layer so step-level conversion and failure analysis stay reliable.
+- **Strategy + Architecture:** World Sketch remains optional in MVP, but the graph cannot paint future world inputs into a structural corner.
+
+### Self-consistency validation for this step
+
+- The contracts reinforce the **solo technical creator** wedge by optimizing for inspectable continuation, not multiplayer or team complexity.
+- The contracts preserve the **Godot-first compile-and-continue loop** while keeping engine target explicit enough for later Unity expansion.
+- The contracts strengthen the **compare / rollback / provenance / privacy** trust position rather than treating it as later hardening.
+- The contracts keep **playtest guidance** honest by forcing observations to resolve to checkpoints and artifacts.
+- The contracts avoid turning World Sketch into mandatory workflow ceremony while still supporting future integration.
+
+## 22. Step 3 Hardening Summary
+
+This contracts step was deliberately hardened through multiple elicitation lenses:
+- **Architecture Decision Records:** forced explicit choices on artifact shape, run records, scope boundaries, and future compatibility.
+- **Cross-Functional War Room:** reconciled creator UX, engineering safety, analytics needs, and trust requirements into one enforceable contract set.
+- **Failure-Mode Analysis:** centered the design around preventing silent overwrite, opaque compile output, and fake traceability.
+- **Self-Consistency Validation:** verified that the contract layer still serves the same wedge, feature spine, and trust promise locked in earlier steps.
+
+**Step 3 verdict:** the PRD now has a real underlying contract model for artifact graph, compile/recompile, compare/rollback, provenance, and bounded playtest guidance. The next step is `4-polish-and-traceability`.
