@@ -1,12 +1,12 @@
 # GameAIgents — Product Requirements Document
 
 _Date: 2026-03-19_  
-_Status: In progress — Step 1 `foundation-and-scope` completed_  
+_Status: In progress — Steps 1 `foundation-and-scope` and 2 `feature-detail` completed_  
 _Authoritative working file for PRD expansion_
 
 ## Document status
 This PRD is being built section-by-section through the BMAD process.
-The current completed PRD step is **foundation-and-scope**.
+The current completed PRD steps are **foundation-and-scope** and **feature-detail**.
 Future steps should extend this file rather than rewrite its foundation casually.
 
 ## 1. Executive Summary
@@ -143,17 +143,18 @@ The first release does not attempt to prove:
 - generalized AI game creation for all creator types
 - platform-scale community governance
 
-## 9. Open Questions to Carry Into PRD Step 2
+## 9. Open Questions to Carry Into PRD Step 3
 - exact flagship demo genre inside the world-driven single-player lane
-- whether World Sketch enters MVP as a secondary path or immediately after compile proof
-- which selective recompile boundary ships first
-- whether first playtest guidance is rules-first or light-telemetry-assisted
+- precise internal schema for artifact graph and revision lineage
+- exact compile output manifest structure for Godot projects
+- how selective recompile targets map to artifact contracts vs file-level contracts
+- whether first playtest guidance is heuristics-only or light-telemetry-assisted
 - how Unity stays visible without overstating v1 depth
+- how future World Sketch support plugs into the artifact graph without polluting MVP simplicity
 
 ## 10. Next PRD Sections to Expand
-1. feature-detail and user flows
-2. data and interface contracts
-3. polish and traceability
+1. data and interface contracts
+2. polish and traceability
 
 ## 11. Foundation Step Decision Summary
 - primary user locked to **solo technical creator**
@@ -162,3 +163,115 @@ The first release does not attempt to prove:
 - trust baseline includes **compare / rollback / provenance / privacy defaults**
 - World Sketch remains strategically important but optional in the first proof
 - Unity remains strategically visible but not first-depth scope
+
+## 12. Feature Detail and User Flows
+
+### 12.1 MVP feature spine
+The first release shall center on this explicit feature sequence:
+- project intake workspace
+- Idea Cascade editor
+- artifact graph / project memory
+- Godot compile workspace
+- selective recompile v1
+- compare / rollback surface
+- provenance and trust baseline
+- narrow playtest guidance
+
+### 12.2 Project intake workspace
+The intake workspace shall let a creator begin from rough prompt, references, and explicit constraints while preserving the raw idea alongside structured interpretation.
+The intake experience shall flag out-of-scope ambitions such as multiplayer or instant full-game expectations without blocking productive use.
+
+### 12.3 Idea Cascade editor
+The system shall convert raw input into an editable structured brief covering fantasy, player role, camera, movement mode, core loop, objective structure, world assumptions, mechanic priorities, and technical constraints.
+Creators shall review and edit this brief before compile.
+
+### 12.4 Artifact graph / project memory
+The system shall persist durable artifacts between the brief and engine output, including revision anchors and lineage metadata.
+This artifact graph is required so selective recompile, compare/rollback, and provenance resolve against stable project structure instead of one opaque prompt transcript.
+
+### 12.5 Godot compile workspace
+The compile workspace shall generate a Godot 4.x prototype scaffold with scene hierarchy shells, controller baseline, input mappings, objective/progression shell, lightweight UI shell, and configuration/data files appropriate to the chosen prototype lane.
+The compile flow shall include a creator-readable summary of what was generated and where to inspect first.
+
+### 12.6 Selective recompile v1
+Selective recompile shall ship only for narrow, approved boundaries in MVP.
+Initial target boundaries are:
+- scene structure
+- mechanics/config surfaces
+- selected interaction or UI shell changes where safe
+
+The system shall disclose expected blast radius before execution and preserve creator edits outside the selected boundary unless a broader overwrite is explicitly approved.
+
+### 12.7 Compare / rollback surface
+The system shall create revision checkpoints for compile and recompile actions and expose a creator-helpful compare view for meaningful changes.
+Rollback shall be available for meaningful generation events so creators can recover from poor outcomes.
+
+### 12.8 Provenance and trust baseline
+The product shall record material generation and compile/recompile actions, preserve artifact lineage and timestamps, and expose lightweight contextual provenance summaries.
+Trust surfaces must help creators understand what changed and where outputs came from without turning the product into a governance dashboard.
+
+### 12.9 Narrow playtest guidance
+The product shall provide artifact-linked refinement guidance focused on onboarding clarity, objective readability, pacing roughness, and basic balance/friction hypotheses.
+This layer shall remain honest and bounded; it helps creators refine a prototype slice rather than claiming full autonomous QA depth.
+
+## 13. Core User Flows
+
+### Flow A — First compile
+1. creator creates a project from rough idea, references, and constraints
+2. system drafts the Idea Cascade brief
+3. creator reviews and edits the brief
+4. system compiles the project into an editable Godot scaffold
+5. creator opens the output in Godot and inspects top-level project structure
+
+**Success condition:** the creator sees the output as a real starting point worth continuing.
+
+### Flow B — Targeted change via selective recompile
+1. creator requests a narrow change or edits the brief
+2. system proposes safe recompile boundaries
+3. creator selects an approved target scope
+4. system recompiles only that boundary
+5. compare view shows what changed
+6. creator accepts the result or rolls back
+
+**Success condition:** the creator feels progress was preserved rather than erased.
+
+### Flow C — Post-compile refinement
+1. creator reviews the compiled prototype slice
+2. system surfaces narrow playtest observations
+3. creator inspects the linked artifact/system behind the observation
+4. creator chooses local edit, selective recompile, or rollback
+
+**Success condition:** the guidance leads to a real next action.
+
+## 14. Additional Functional Requirements from Step 2
+
+### FR-11 Project intake must preserve raw creator intent
+The system shall store original prompt/reference input alongside structured outputs.
+
+### FR-12 Brief review before compile
+The system shall provide an editable structured brief review step before compile execution.
+
+### FR-13 Compile summary visibility
+The system shall provide a creator-readable compile summary describing major generated artifacts and suggested next inspection points.
+
+### FR-14 Recompile boundary disclosure
+The system shall explain the selected recompile boundary and expected blast radius before execution.
+
+### FR-15 Edit preservation outside target scope
+The system shall preserve creator edits outside the selected recompile boundary unless the user explicitly approves a broader overwrite.
+
+### FR-16 Revision checkpoints for compile actions
+The system shall create revision checkpoints for compile and recompile events that compare/rollback can target.
+
+### FR-17 Artifact-linked guidance
+The system shall connect playtest guidance to visible artifacts, systems, or config surfaces whenever possible.
+
+### FR-18 Risk flagging for out-of-scope requests
+The system shall flag, but not theatrically over-block, requests that exceed the MVP wedge or trust envelope.
+
+## 15. Step 2 Decision Summary
+- MVP feature spine locked to **intake → Idea Cascade → artifact graph → Godot compile → selective recompile → compare/rollback → provenance → narrow playtest guidance**.
+- **Compile summary**, **artifact graph**, and **compare/rollback** are treated as trust-critical product features, not polish.
+- **Selective recompile** is locked to narrow shipping boundaries with explicit blast-radius disclosure.
+- **Playtest guidance** remains inside scope only as artifact-linked refinement help.
+- Step 3 should now define the underlying data and interface contracts that make these features implementable.

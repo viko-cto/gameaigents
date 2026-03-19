@@ -25,3 +25,27 @@
   - P0 scope, non-goals, success gates, and foundational functional requirements are now concrete enough to expand feature detail without reopening the strategic wedge.
   - Unity remains architecturally important and commercially visible, but not a first-depth requirement for the opening PRD proof.
 - Next BMAD step: `prd / 2-feature-detail`
+
+## 2026-03-19 — PRD Step 2: Feature Detail
+- Scope executed: **2-feature-detail only**
+- Inputs used:
+  - `docs/bmad-phase3/01-foundation-and-scope.md`
+  - `docs/bmad-phase3/01-foundation-and-scope-elicitation-log.md`
+  - `docs/bmad-phase3/01-foundation-and-scope-open-questions.md`
+  - `docs/research/phase-1/02-competition-tech-differentiation.md`
+  - `docs/research/phase-1/03-trust-compliance-gtm.md`
+  - `docs/strategy/2026-03-17-competitive-learnings-and-world-model-plan.md`
+- Goal: translate the locked PRD foundation into a concrete MVP feature contract, user-flow spine, and acceptance logic without reopening the strategic wedge.
+- Method: first-principles feature filtering, workflow-integrity testing, pre-mortem, cross-functional war room, comparative-analysis matrix, contradiction hunting, creator-journey compression, failure-mode analysis, and self-consistency validation.
+- Elicitation count completed in this run: **12**
+- Artifacts created:
+  - `docs/bmad-phase3/02-feature-detail.md`
+  - `docs/bmad-phase3/02-feature-detail-elicitation-log.md`
+  - `docs/bmad-phase3/02-feature-detail-open-questions.md`
+  - `_bmad/_bmad-output/planning-artifacts/prd-gameaigents.md`
+- Outcome:
+  - The MVP feature spine is now explicit: **intake → Idea Cascade → artifact graph → Godot compile → selective recompile → compare/rollback → provenance → narrow playtest guidance**.
+  - The compile summary, compare/rollback, and artifact graph are now treated as trust-critical workflow features rather than later polish.
+  - Selective recompile is locked to narrow shipping boundaries with explicit blast-radius disclosure.
+  - Playtest guidance remains inside scope, but only as artifact-linked refinement help rather than inflated autonomous QA.
+- Next BMAD step: `prd / 3-data-and-interface-contracts`
