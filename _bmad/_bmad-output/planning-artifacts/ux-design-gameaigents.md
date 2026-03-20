@@ -1,13 +1,13 @@
-# GameAIgents — UX Design Specification
+# GameAIgents — UX Design
 
 _Date: 2026-03-20_  
-_Status: Step 1 complete — specification and creator flows locked for MVP UX design_  
-_Downstream next: wireframes and component contracts_
+_Status: Step 2 complete — UX specification, wireframes, and component/state contracts locked for MVP_  
+_Current phase verdict: UX design complete and implementation-ready_
 
 ## 1. UX Summary
 GameAIgents should feel like a **creator workspace for turning fuzzy game ideas into editable engine-native prototypes**, not a generic prompt-to-game toy.
 
-The MVP UX centers on one user:
+The MVP centers on one user:
 - **solo technical creator**
 
 And one promise:
@@ -52,7 +52,7 @@ Includes inferred-vs-confirmed distinction and out-of-scope risk flags.
 
 ### 4.4 Compile workspace
 Previews expected compile outputs and runs the first Godot scaffold compile.
-Post-compile summary must include inspection points, warnings, and checkpoint creation.
+Post-compile summary includes inspection points, warnings, and checkpoint creation.
 
 ### 4.5 Compare & Recompile workspace
 Owns semantic compare, blast-radius disclosure, bounded recompile approval, and rollback.
@@ -84,21 +84,52 @@ Provenance & Export → lineage review → export bundle / disclosure helper
 - provenance should stay quiet in the core workflow but always be exportable
 - privacy stays private-by-default and single-owner in alpha
 
-## 7. Locked UX Defaults
+## 7. Wireframe-Level Layout Decisions
+- stable workspace shell with left nav, top bar, and trust-sensitive meta rail
+- dashboard cards lead with next action, not vanity metrics
+- brief editor uses side-by-side structured truth and raw input
+- compile summary uses task-oriented inspection cards
+- compare defaults to timeline + semantic summary + blast radius, with raw file detail as secondary depth
+- provenance remains globally reachable but visually quiet
+
+## 8. Reusable MVP Components
+- `ProjectStatusCard`
+- `CertaintyBadge`
+- `CompileReadinessChecklist`
+- `OutputExpectationCard`
+- `RevisionTimeline`
+- `SemanticDiffSummary`
+- `ScopeSelector`
+- `TrustBlastRadiusPanel`
+- `ObservationCard`
+- `ProvenanceExportPanel`
+
+## 9. MVP State Models
+- project lifecycle: `new → intake-draft → brief-draft → brief-approved → compile-ready → compiling → compiled → recompile-ready → recompiling → compiled-updated`
+- compile jobs: `planning → queued → running → success | blocked | failed`
+- recompile requests: `draft-request → scoped → risk-reviewed → approved → running → success | blocked | failed | rolled-back`
+- observation lifecycle: `new → reviewed → action-selected → resolved | ignored`
+
+## 10. Locked UX Defaults
 - flagship prototype lane: **light action-adventure exploration slice**
 - engine target emphasis: **Godot-first**
 - compare default: **semantic checkpoint summary before file-level detail**
 - recompile emphasis: **mechanics/config and scene-structure first**
+- preservation confidence: **plain-language tiers**
 - provenance export: **JSON bundle + creator-readable markdown summary**
 - collaboration posture: **single-owner alpha**
 
-## 8. First UX Build Slice
-1. Projects dashboard
-2. Intake workspace
-3. Brief editor + approval
-4. Compile workspace + compile summary
-5. Compare & Recompile for one narrow scope
-6. Basic Provenance & Export summary
+## 11. First UX Build Slice
+1. workspace shell
+2. Projects dashboard
+3. Intake workspace
+4. Brief editor + approval
+5. Compile workspace + compile summary
+6. Compare & Recompile for one narrow scope
+7. Basic Provenance & Export summary
+8. Playtest observation cards
 
-## 9. UX Step Verdict
-The UX is now specific enough for wireframes and component contracts without reopening the product thesis.
+## 12. UX Phase Verdict
+The UX design phase is now specific enough for implementation scaffolding and visual design without reopening the strategic BMAD core.
+
+GameAIgents now has a concrete creator-workspace contract instead of vague “good UX” intent.
