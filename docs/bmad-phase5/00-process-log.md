@@ -26,3 +26,27 @@
   - Kept **World Sketch** and future provider experimentation behind an optional provider layer so the deterministic compile spine remains the source of truth.
   - Established the first implementation vertical slice around **intake → brief approval → compile request → compile worker → manifest/checkpoint → compare/provenance surfaces**.
 - Next BMAD step: `architecture / 2-data-security-and-integration-boundaries`
+
+## 2026-03-20 — Architecture Step 2: Data, Security, and Integration Boundaries
+- Scope executed: **2-data-security-and-integration-boundaries only**
+- Inputs used:
+  - `docs/bmad-phase5/01-foundation-and-system-topology.md`
+  - `docs/bmad-phase3/03-data-and-interface-contracts.md`
+  - `docs/bmad-phase4/02-wireframes-and-component-contracts.md`
+  - `docs/research/phase-1/03-trust-compliance-gtm.md`
+  - `docs/strategy/2026-03-17-competitive-learnings-and-world-model-plan.md`
+- Goal: lock which data is canonical, which data is sensitive, how private-by-default is enforced, and how compile workers plus external providers stay boxed inside trustworthy integration boundaries.
+- Method: data-boundary decomposition, privacy-by-default reality check, red-team exfiltration pass, compile-blast-radius analysis, provider-lock-in stress test, failure-mode analysis, trust-surface-to-data mapping, first-principles auth pass, publish-safety integration review, anti-magic boundary review, cross-functional war room, and self-consistency validation.
+- Elicitation count completed in this run: **12**
+- Artifacts created:
+  - `docs/bmad-phase5/02-data-security-and-integration-boundaries.md`
+  - `docs/bmad-phase5/02-data-security-and-integration-boundaries-elicitation-log.md`
+  - `docs/bmad-phase5/02-data-security-and-integration-boundaries-open-questions.md`
+  - `_bmad/_bmad-output/planning-artifacts/architecture-gameaigents.md`
+- Outcome:
+  - Locked **first-party project records** as the only canonical product truth; providers and blobs are now explicitly subordinate.
+  - Defined enforceable data classes across **project-private, generated, publish-support, system-sensitive, and ops-observability** domains.
+  - Constrained compile/recompile into **guarded isolated workers** with scoped execution packages and bounded output channels.
+  - Boxed all external model/world/moderation dependencies behind **replaceable capability adapters** with provenance and policy hooks.
+  - Turned exports into **explicit packaging actions** that preserve creator trust artifacts while excluding secrets and internal policy internals.
+- Next BMAD step: `architecture / 3-runtime-operations-and-delivery`
