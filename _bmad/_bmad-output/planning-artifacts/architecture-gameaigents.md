@@ -2,6 +2,7 @@
 stepsCompleted:
   - 1
   - 2
+  - 3
 inputDocuments:
   - docs/bmad-phase3/04-polish-and-traceability.md
   - _bmad/_bmad-output/planning-artifacts/prd-gameaigents.md
@@ -14,12 +15,12 @@ inputDocuments:
 workflowType: 'architecture'
 project_name: 'gameaigents'
 user_name: 'Node'
-date: '2026-03-20T14:15:00Z'
+date: '2026-03-20T16:15:00Z'
 ---
 
 # GameAIgents — Architecture
 
-_Status: Steps 1-2 complete — topology plus data/security boundaries locked for MVP_
+_Status: Architecture complete — topology, trust boundaries, and runtime delivery model locked for MVP_
 
 ## 1. Architecture Summary
 GameAIgents should launch on a **web-first modular-monolith architecture** that supports one core promise:
@@ -32,7 +33,8 @@ That means:
 - compile/recompile happen through explicit job lifecycles
 - providers stay bounded behind adapters
 - trust surfaces resolve to durable runtime records
-- private-by-default is enforced in storage, auth, and export design
+- private-by-default is enforced in storage, auth, export, and support design
+- runtime operations prefer honest delivery over flashy but brittle complexity
 
 ## 2. Architecture Principles
 - deterministic artifact graph over chat-history dependence
@@ -43,6 +45,7 @@ That means:
 - provider minimization and replaceability
 - optional World Sketch compatibility without making it mandatory in MVP
 - single-owner alpha discipline over premature collaboration complexity
+- recovery-first runtime posture over scale-first infra theater
 
 ## 3. Locked MVP Topology
 
@@ -112,16 +115,17 @@ The first architecture-backed implementation slice remains:
 6. finalize manifest + checkpoint + provenance
 7. show compile summary / compare / provenance in UI
 
-Step 2 clarifies that this slice must also enforce:
+This slice must also enforce:
 - project-scoped auth
 - metadata-gated object access
 - scoped worker input packages
 - system-sensitive secret isolation
+- durable job lifecycle visibility
 
-## 5. Data and Security Boundaries Locked in Step 2
+## 5. Data and Security Boundaries
 
 ### 5.1 Canonical domains
-The architecture now distinguishes four domains:
+The architecture distinguishes four domains:
 - **core project truth** — canonical first-party records
 - **large object payloads** — references, bundles, checkpoints, exports
 - **system-sensitive configuration** — secrets, internal policy config, service credentials
@@ -138,14 +142,14 @@ The system adopts explicit data classes:
 Each class carries default handling and export rules rather than relying on ad hoc engineering judgment.
 
 ### 5.3 Private-by-default enforcement
-Private-by-default is now architectural, not rhetorical:
+Private-by-default is architectural, not rhetorical:
 - all project data resolves through owner/project scope
 - storage keys are project-partitioned
 - object access is metadata-gated
 - support access requires explicit elevated handling
 
 ### 5.4 Compile worker boundary
-Compile/recompile must run through **guarded isolated workers** that receive scoped execution packages and return bounded outputs.
+Compile/recompile runs through **guarded isolated workers** that receive scoped execution packages and return bounded outputs.
 Workers are not trusted to mutate broad project state directly.
 
 ### 5.5 Provider boundary
@@ -161,7 +165,95 @@ Exports are explicit packaging actions that:
 - preserve provenance and policy outputs
 - automatically exclude secrets and internal policy internals
 
-## 6. ADRs Locked Across Steps 1-2
+## 6. Runtime Operations and Delivery
+
+### 6.1 Environment model
+The MVP should launch with three environments:
+- **dev**
+- **staging**
+- **production**
+
+Staging is mandatory because compile/runtime behavior, migration paths, and restore drills need rehearsal before production.
+
+### 6.2 Runtime services
+Production runs as a small deployment around one logical modular monolith:
+- web/API service
+- job coordinator
+- guarded compile worker lane
+- Postgres
+- object storage
+- optional lightweight status channel
+
+### 6.3 Job lanes
+Jobs are separated into operational lanes:
+- compile
+- recompile
+- export/provenance
+- playtest guidance
+
+Each lane gets its own timeout, retry, alerting, and concurrency posture.
+
+### 6.4 Canonical job lifecycle
+Every async job must carry durable states such as:
+- `queued`
+- `accepted`
+- `running`
+- `awaiting-artifact-promotion`
+- `succeeded`
+- `failed-retryable`
+- `failed-terminal`
+- `cancelled`
+- `expired`
+
+### 6.5 Status delivery
+The MVP uses:
+- durable read models in Postgres as truth
+- polling as the baseline status transport
+- optional SSE where cheap and useful
+
+### 6.6 Deployment boundaries
+Release boundaries remain explicit across:
+- web/API
+- workers
+- migrations
+- policy/config bundles
+
+### 6.7 Backup and retention posture
+The architecture requires:
+- scheduled Postgres backups
+- tested restore drills in staging
+- class-aware retention rules
+- short-TTL cleanup for ephemeral workdirs and transient runtime residue
+
+### 6.8 Observability posture
+Operations telemetry must key on:
+- `projectId`
+- `runId`
+- lane type
+- worker version
+- provider metadata where relevant
+
+Logs are structured and redacted by default.
+Support starts from metadata and diagnostics, not raw creator payload capture.
+
+### 6.9 Support posture
+Support access is:
+- explicit
+- audited
+- time-bounded
+- reason-scoped
+- project-bounded
+
+There is no silent roaming admin mode in the MVP architecture.
+
+### 6.10 Capacity and rollout posture
+The MVP optimizes for:
+- low parallelism with trustworthy completion
+- explicit backpressure
+- bounded provider/worker cost
+- internal → staging → founder-controlled alpha → measured expansion
+
+## 7. ADRs Locked Across Steps 1-3
 
 ### ADR-001
 Use a **web-first modular monolith** for MVP.
@@ -199,17 +291,32 @@ Put **all external providers behind replaceable capability adapters**.
 ### ADR-012
 Make **exports explicit packaging actions that exclude system-sensitive data automatically**.
 
-## 7. What Remains for Step 3
-The following are intentionally deferred to `runtime-operations-and-delivery`:
-- queue/runtime framework selection
-- deployment topology and environment promotion
-- backup / retention rules by data class
-- alerting and incident thresholds
-- support-access escalation workflow
-- cost, region, and rollout strategy
+### ADR-013
+Use **three environments: dev, staging, production**.
+
+### ADR-014
+Separate **runtime lanes by job class**.
+
+### ADR-015
+Treat **job lifecycle state as durable product truth**.
+
+### ADR-016
+Keep **status delivery simple: durable read models plus polling, optional SSE**.
+
+### ADR-017
+Deploy **web/API, workers, migrations, and policy/config with explicit release boundaries**.
+
+### ADR-018
+Make **restore-tested backups and class-aware retention** part of MVP architecture.
+
+### ADR-019
+Default to **redacted structured observability with audited break-glass escalation**.
+
+### ADR-020
+Favor **explicit backpressure and bounded alpha throughput** over premature scale complexity.
 
 ## 8. Current Verdict
-The architecture is now defined tightly enough to move into **runtime-operations-and-delivery** without reopening the strategic wedge, PRD contracts, or UX trust model.
+The architecture is now complete and stable enough to move into implementation planning without reopening the strategic wedge, PRD contracts, UX trust model, or privacy posture.
 
 GameAIgents now has:
 - a credible system topology
@@ -217,5 +324,8 @@ GameAIgents now has:
 - enforceable privacy and storage boundaries
 - constrained compile execution lanes
 - provider abstraction that protects the product from vendor drift
+- deployment and promotion discipline
+- observability and support rules that respect creator trust
+- backup, retention, and recovery posture strong enough for alpha
 
 That is the right architecture posture for a serious creator-to-production copilot.

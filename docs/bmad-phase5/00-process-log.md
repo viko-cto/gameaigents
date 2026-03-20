@@ -50,3 +50,29 @@
   - Boxed all external model/world/moderation dependencies behind **replaceable capability adapters** with provenance and policy hooks.
   - Turned exports into **explicit packaging actions** that preserve creator trust artifacts while excluding secrets and internal policy internals.
 - Next BMAD step: `architecture / 3-runtime-operations-and-delivery`
+
+
+## 2026-03-20 — Architecture Step 3: Runtime Operations and Delivery
+- Scope executed: **3-runtime-operations-and-delivery only**
+- Inputs used:
+  - `docs/bmad-phase5/01-foundation-and-system-topology.md`
+  - `docs/bmad-phase5/02-data-security-and-integration-boundaries.md`
+  - `docs/bmad-phase3/03-data-and-interface-contracts.md`
+  - `docs/bmad-phase4/02-wireframes-and-component-contracts.md`
+  - `docs/research/phase-1/03-trust-compliance-gtm.md`
+  - `_bmad/_bmad-output/planning-artifacts/prd-gameaigents.md`
+- Goal: lock how the MVP actually runs in production — job lanes, delivery model, observability, backups, support access, retention, rollout discipline, and failure recovery — without reopening product or trust scope.
+- Method: runtime-lane decomposition, delivery-surface reality check, deployment-boundary review, recovery-first architecture pass, backup-and-restore pre-mortem, retention-classification pass, support-vs-privacy war room, cost-and-capacity discipline review, incident-observability mapping, migration-risk analysis, founder-alpha rollout pass, and self-consistency validation.
+- Elicitation count completed in this run: **12**
+- Artifacts created:
+  - `docs/bmad-phase5/03-runtime-operations-and-delivery.md`
+  - `docs/bmad-phase5/03-runtime-operations-and-delivery-elicitation-log.md`
+  - `docs/bmad-phase5/03-runtime-operations-and-delivery-open-questions.md`
+  - `_bmad/_bmad-output/planning-artifacts/architecture-gameaigents.md`
+- Outcome:
+  - Locked a **three-environment delivery model** (`dev`, `staging`, `production`) so compile/runtime behavior and restore paths are rehearsed before production.
+  - Split async work into **compile, recompile, export/provenance, and playtest-guidance lanes** with lane-specific retry, alerting, timeout, and cost posture.
+  - Made **durable job lifecycle state, class-aware retention, restore-tested backups, and redacted structured observability** part of the architecture rather than implementation wishes.
+  - Defined **audited break-glass support access** so operators can debug failures without collapsing the private-by-default trust position.
+  - Finished the architecture with an **explicit alpha rollout posture**: internal proof → staging rehearsal → founder-controlled production alpha → measured expansion.
+- Next BMAD step: `await-next-phase-definition (architecture complete; implementation planning can begin)`
