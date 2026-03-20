@@ -1,13 +1,13 @@
 # GameAIgents — Product Requirements Document
 
-_Date: 2026-03-19_  
-_Status: In progress — Steps 1 `foundation-and-scope` and 2 `feature-detail` completed_  
-_Authoritative working file for PRD expansion_
+_Date: 2026-03-20_  
+_Status: Completed — Steps 1 `foundation-and-scope`, 2 `feature-detail`, 3 `data-and-interface-contracts`, and 4 `polish-and-traceability` completed_  
+_Authoritative PRD ready for downstream UX / architecture handoff_
 
 ## Document status
 This PRD is being built section-by-section through the BMAD process.
-The current completed PRD steps are **foundation-and-scope** and **feature-detail**.
-Future steps should extend this file rather than rewrite its foundation casually.
+All four PRD steps are now complete: **foundation-and-scope**, **feature-detail**, **data-and-interface-contracts**, and **polish-and-traceability**.
+Downstream phases should extend this file rather than reopen its strategic wedge, target user, or trust posture casually.
 
 ## 1. Executive Summary
 GameAIgents is building a **creator-to-production copilot** for game development.
@@ -143,7 +143,7 @@ The first release does not attempt to prove:
 - generalized AI game creation for all creator types
 - platform-scale community governance
 
-## 9. Open Questions to Carry Into PRD Step 3
+## 9. Historical Open Questions Carried Forward From Step 1
 - exact flagship demo genre inside the world-driven single-player lane
 - precise internal schema for artifact graph and revision lineage
 - exact compile output manifest structure for Godot projects
@@ -152,9 +152,11 @@ The first release does not attempt to prove:
 - how Unity stays visible without overstating v1 depth
 - how future World Sketch support plugs into the artifact graph without polluting MVP simplicity
 
-## 10. Next PRD Sections to Expand
-1. data and interface contracts
-2. polish and traceability
+Most of these were resolved in Sections 16-26. They remain here only as historical traceability from the initial PRD foundation pass.
+
+## 10. Historical PRD Build Sequence (Completed)
+1. data and interface contracts — completed in Sections 16-22
+2. polish and traceability — completed in Sections 23-26
 
 ## 11. Foundation Step Decision Summary
 - primary user locked to **solo technical creator**
@@ -500,4 +502,104 @@ This contracts step was deliberately hardened through multiple elicitation lense
 - **Failure-Mode Analysis:** centered the design around preventing silent overwrite, opaque compile output, and fake traceability.
 - **Self-Consistency Validation:** verified that the contract layer still serves the same wedge, feature spine, and trust promise locked in earlier steps.
 
-**Step 3 verdict:** the PRD now has a real underlying contract model for artifact graph, compile/recompile, compare/rollback, provenance, and bounded playtest guidance. The next step is `4-polish-and-traceability`.
+**Step 3 verdict:** the PRD now has a real underlying contract model for artifact graph, compile/recompile, compare/rollback, provenance, and bounded playtest guidance. The remaining PRD task was a final polish-and-traceability pass.
+
+## 23. Step 4 — Polish, Traceability, and Handoff Readiness
+
+This step does **not** reopen the wedge.
+It exists to make the PRD implementation-ready by tightening language, cleaning contradictions, mapping requirements back to evidence, and locking the working defaults that downstream UX and architecture work should inherit.
+
+### 23.1 Cross-document traceability matrix
+
+| Strategic anchor | Phase 1 / brief evidence | PRD implementation sections | Why it matters in handoff |
+|---|---|---|---|
+| **Blank-page friction and restart waste are the first paid pain** | `docs/research/phase-1/01-market-user-wedge.md`; Product brief opening + solution loops | Sections 2, 4, 7, 12.2-12.5, Flows A-C | UX and architecture should optimize time-to-first-editable-scaffold, not feature sprawl. |
+| **Solo technical creator is the primary user** | `01-market-user-wedge.md`; product-brief wedge-and-user cluster | Sections 3, 5, 11, 21 | Prevents drift into no-code hobbyist or multi-role team complexity in MVP. |
+| **Godot-first, engine-flexible later** | `01-market-user-wedge.md`; `02-competition-tech-differentiation.md`; strategy memo | Sections 1, 5, 12.5, 16.1, 21 | Build the first deep path in Godot while preserving clean engine-target abstractions for later Unity depth. |
+| **Continuation value beats generation spectacle** | `01-market-user-wedge.md`; `02-competition-tech-differentiation.md`; product-brief solution loop | Sections 4, 6, 12, FR-04, FR-10, FR-13 | Compile output, artifact graph, and recompile trust are core product value, not polish garnish. |
+| **Selective recompile trust is a make-or-break differentiator** | product-brief scope-risk-validation; `03-trust-compliance-gtm.md` | Sections 12.6, 14, 16.3, 17, 20 | Engineering must treat boundary disclosure, preservation, and rollback as first-class safety systems. |
+| **Provenance, privacy, and publish-safety are product features** | `03-trust-compliance-gtm.md`; strategy memo | Sections 5, 19, FR-07, FR-29, FR-35, FR-36 | Trust/compliance cannot be postponed to a legal appendix or post-launch patch. |
+| **World Sketch is strategically important but optional in MVP** | `02-competition-tech-differentiation.md`; strategy memo | Sections 5, 16.1, 16.2, 19.2, 21 | Future compatibility matters, but MVP build order stays focused on the deterministic compile-and-continue loop. |
+| **Playtest guidance must stay bounded and honest** | product-brief solution-and-loop cluster; `03-trust-compliance-gtm.md` | Sections 12.8-12.9, FR-09, FR-31, 19.2 | Avoids drifting into fake autonomous QA claims unsupported by MVP evidence. |
+
+### 23.2 Requirement-to-risk traceability highlights
+
+| Risk to control | PRD controls |
+|---|---|
+| Silent overwrite destroys creator trust | FR-05, FR-14, FR-15, FR-25, FR-26, FR-27, FR-28, NFR-007 |
+| Compile summaries become narrative fluff | FR-13, FR-24, FR-30, Section 19.2 |
+| Provenance/disclosure gets bolted on too late | FR-07, FR-29, FR-36, Sections 18-19 |
+| MVP drifts toward generic prompt-to-game positioning | Sections 1, 3, 5, 8, 11, 21 |
+| World Sketch bloats launch scope | Sections 5, 16.1, 16.2, 21 |
+| Playtest guidance overclaims evidence | FR-09, FR-17, FR-31, Section 19.2 |
+
+## 24. Contradiction Cleanup and Locked Working Defaults
+
+### 24.1 Language and consistency cleanup completed
+
+- **Primary user language normalized:** the PRD now consistently treats the **solo technical creator** as the launch user, with solo/duo builders as an early adjacency rather than equal first-class scope.
+- **Artifact graph language normalized:** earlier "compile-ready artifact graph baseline" phrasing is now concretely grounded in the typed artifact + revision + lineage model in Sections 16-18.
+- **Trust-surface language normalized:** compile summary, compare/rollback, provenance, and blast-radius disclosure are treated as **core workflow surfaces**, not cosmetic polish.
+- **Engine strategy normalized:** Godot is the launch-depth path; Unity remains visible at the architecture and roadmap level without pretending launch parity.
+- **World Sketch language normalized:** it remains a future-compatible optional artifact class, not a mandatory runtime or launch blocker.
+- **Playtest language normalized:** guidance remains artifact-linked and bounded to prototype refinement; no autonomous full-QA positioning is implied.
+
+### 24.2 Locked working defaults for downstream handoff
+
+These defaults are now the implementation assumptions unless later phases deliberately override them with evidence.
+
+| Decision area | Locked default | Reason |
+|---|---|---|
+| **Flagship prototype lane** | **Light action-adventure exploration slice** with movement, one traversal hook, interactable objective chain, simple HUD, and at most one light encounter/hazard lane | Best demonstrates world-driven structure plus editable scene/mechanics value without dragging the MVP into survival-economy or full combat complexity. |
+| **Selective recompile launch depth** | Prioritize **mechanics/config** and **scene-structure** scopes first; keep **interaction/UI shell** narrow and explicitly bounded | Maximizes trust and usefulness while minimizing unsafe overwrite risk. |
+| **Local edit protection** | Use manifest-aware preservation checks and fail closed when scope resolution or preservation confidence is weak | Honest refusal is safer than false preservation confidence. |
+| **Playtest guidance evidence model** | Ship **heuristics-first, artifact-linked guidance** in P0; treat runtime telemetry as follow-on depth, not a launch dependency | Keeps claims honest and the core loop fast. |
+| **Provenance export default** | Export **machine-readable JSON bundle plus creator-readable markdown summary** | Covers both auditability and practical creator review. |
+| **Alpha collaboration posture** | Keep alpha **single-owner**; allow read-only export/share before live collaboration | Preserves wedge discipline and avoids premature collaboration complexity. |
+
+## 25. Handoff Notes for UX, Architecture, and Build Sequencing
+
+### 25.1 Recommended first vertical slice
+
+The first build slice should prove the core promise in this order:
+1. project intake + raw intent preservation
+2. structured brief review/approval
+3. first Godot compile for the flagship light action-adventure exploration slice
+4. compile summary + manifest + checkpoint creation
+5. one safe selective recompile flow against a narrow mechanics/config or scene-structure scope
+6. compare/rollback against meaningful checkpoints
+7. provenance export baseline
+8. heuristic, artifact-linked playtest guidance
+
+### 25.2 Cross-functional handoff guidance
+
+- **UX:** optimize for clarity of compile results, inspection points, and safe recompile boundary explanation before adding community or collaboration surfaces.
+- **Architecture:** keep engine target, artifact lineage, checkpoints, and policy-gate records in the core domain model from day one.
+- **Engineering:** treat preservation guarantees, idempotent writes, and checkpoint integrity as product behavior, not infrastructure trivia.
+- **Trust/compliance:** design disclosure and provenance outputs as lightweight defaults with deeper exportability available when needed.
+- **GTM:** position the first proof as a creator-controlled Godot prototype scaffold, not a generic “AI makes games” demo.
+
+### 25.3 What downstream phases should not reopen casually
+
+- the primary user (**solo technical creator**)
+- the wedge (**Godot-first creator-to-production copilot**)
+- the core loop (**idea cascade → compile → continue → selective recompile → bounded playtest refinement**)
+- the trust posture (**private by default, reversible, traceable, platform-aware**)
+- the World Sketch stance (**optional strategic layer, not MVP runtime core**)
+
+## 26. Residual Open Questions and Final PRD Verdict
+
+### 26.1 Residual open questions after Step 4
+
+The remaining questions are now implementation-level, not wedge-level:
+- exact visual/theme reference pack for the flagship light action-adventure exploration slice
+- whether compile summary UI should default to task-oriented inspection cards, file-map tables, or a hybrid view
+- which checkpoint storage implementation gives the cleanest rollback guarantees in the first build stack
+- whether lightweight runtime markers can be added without slowing the first compile-and-continue loop
+
+### 26.2 Final PRD verdict
+
+**PRD verdict: ready for downstream UX and architecture phases.**
+
+The PRD is now internally consistent around the target user, the Godot-first wedge, the continuation-first product loop, the typed artifact/manifest/checkpoint trust model, and the bounded publishing-safety posture.
+Remaining uncertainty is narrow enough to resolve during design and architecture without reopening the core product thesis.
